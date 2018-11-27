@@ -1,0 +1,11 @@
+/home/hugo/projets/clean_tp/App/bin/Debug/netcoreapp2.1/App.deps.json
+/home/hugo/projets/clean_tp/App/bin/Debug/netcoreapp2.1/App.runtimeconfig.json
+/home/hugo/projets/clean_tp/App/bin/Debug/netcoreapp2.1/App.runtimeconfig.dev.json
+/home/hugo/projets/clean_tp/App/bin/Debug/netcoreapp2.1/App.dll
+/home/hugo/projets/clean_tp/App/bin/Debug/netcoreapp2.1/App.pdb
+/home/hugo/projets/clean_tp/App/obj/Debug/netcoreapp2.1/App.csprojAssemblyReference.cache
+/home/hugo/projets/clean_tp/App/obj/Debug/netcoreapp2.1/App.csproj.CoreCompileInputs.cache
+/home/hugo/projets/clean_tp/App/obj/Debug/netcoreapp2.1/App.AssemblyInfoInputs.cache
+/home/hugo/projets/clean_tp/App/obj/Debug/netcoreapp2.1/App.AssemblyInfo.cs
+/home/hugo/projets/clean_tp/App/obj/Debug/netcoreapp2.1/App.dll
+/home/hugo/projets/clean_tp/App/obj/Debug/netcoreapp2.1/App.pdb
