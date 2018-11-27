@@ -3,92 +3,145 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace LightSaberFactory
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            //check that data input is valid if command is CHECK
-			if (args [0] == "check") {
-				var lines = File.ReadAllLines (args [1]);
-				//first line is the header
-				var header = lines [0].Split (":".ToCharArray ());
-				//if it is data for template of type "register-confirmation"
-				if (header [0] == "template" && header [1] == "register-confirmation") {
-					var body = lines.Skip (1);
-					//the list of the mandatory keys
-					Dictionary<string,bool> dic1 = new Dictionary<string, bool> { 
-						{ "name",false },
-						{ "title", false },
-						{ "mail",false }, 
-						{ "code",false }
-					};
-					//then try to find if the keys are present in the data
-					foreach (var line in body) {
-						var pair = line.Split (":".ToCharArray ());
-						var key = pair [0].Trim ();
-						//if key is present then it's ok, 
-						if (dic1.ContainsKey (key)) {
-							//mark it true
-							dic1 [key] = true;
-						}
-					}
-					//if there is at least one false value remaining then error
-					if (dic1.Any (x => !x.Value))
-						Console.WriteLine ("-5"); //error code 5 represents bad data input 
-					else
-						Console.WriteLine ("data is valid"); //0 means no error found
-				} else {
-					//it's not a valid data file
-					Console.WriteLine ("it's not a valid template");
-				}
-			} else if (args [0] == "fill") {
-				var lines = File.ReadAllLines (args [1]);
-				//first line is the header
-				var header = lines [0].Split (":".ToCharArray ());
-				//if it is data for template of type "register-confirmation"
-				if (header [0] == "template" && header [1] == "register-confirmation") {
-					var content = File.ReadAllText (args [2]);
-					var body = lines.Skip (1);
-					Dictionary<string,string> dic2 = new Dictionary<string, string> ();
-					Dictionary<string,string> dic3 = new Dictionary<string, string> {
-						{"datetime",DateTime.Now.ToString()},
-						{"website","http://thelightsabersguild.com"}
-					};
-					//then add all the keys found to a dictionary of values
-					foreach (var line in body) {
-						var pair = line.Split (":".ToCharArray ());
-						var key = pair [0].Trim ();
-						var value = pair [1];
-						//if key is present then it's ok, 
-						if (dic2.ContainsKey (key)) {
-							//mark it true
-							dic2[key] = value;
-						} else {
-							dic2.Add (key, value);
-						}
-					}
+namespace LightSaberFactory {
 
-					//then replace the values
-					foreach (var keyvalue in dic2) {
-						content = content.Replace ("{{" + keyvalue.Key + "}}", keyvalue.Value);
-					}
-					//and replace the special function keys
-					foreach (var funcvalue in dic3) {
-						content = content.Replace ("{{=" + funcvalue.Key + "}}", funcvalue.Value);
-					}
+    public class TemplateConfig {
+        
+        private TemplateLineConfig Header;
+        public List<TemplateLineConfig> Body;
 
-					Console.WriteLine (content);
-				} else {
-					//it's not a valid data template
-					Console.WriteLine("can't fill a template with invalid data");
-				}
-			} else {
-				Console.WriteLine ("valid commands are [check],[fill]");
-			}
+        private readonly Dictionary<string, bool> validationDict;
+        public TemplateConfig(TemplateLineConfig Header, List<TemplateLineConfig> Body) {
+            this.Header = Header;
+            this.Body = Body;
 
-			Console.Read ();
+            this.validationDict = new Dictionary<string, bool> { 
+                { "name",false },
+                { "title", false },
+                { "mail",false }, 
+                { "code",false }
+            };
+        }
+
+        public bool IsValid() {
+            if (Header.Key == "template" && Header.Value == "register-confirmation") {
+                //then try to find if the keys are present in the data
+                foreach (TemplateLineConfig line in Body) {
+                    //if key is present then it's ok, 
+                    if (this.validationDict.ContainsKey (line.Key)) {
+                        //mark it true
+                        this.validationDict[line.Key] = true;
+                    }
+                }
+
+                return this.validationDict.Any(x => x.Value);
+            }
+
+            return false;
+        }
+    }
+
+    public class TemplateLineConfig {
+        public string Key {get; set;}
+        public string Value {get; set;}
+
+        public TemplateLineConfig(string Key, string Value) {
+            this.Key = Key;
+            this.Value = Value;
+        }
+    }
+
+    public class TemplateParser {
+        public TemplateConfig ParseConfig(string[] lines) {
+            // first line is the header
+            TemplateLineConfig header = this.ParseLine(lines[0]);
+            List<TemplateLineConfig> body = new List<TemplateLineConfig>();
+
+            var remainingLines = lines.Skip(1);
+
+            foreach (string line in remainingLines) {
+                body.Add(this.ParseLine(line));
+            }
+
+            return new TemplateConfig(header, body);
+        }
+
+        public string ParseContent(string content, TemplateConfig config) {
+            Dictionary<string,string> dic3 = new Dictionary<string, string> {
+                {"datetime",DateTime.Now.ToString()},
+                {"website","http://thelightsabersguild.com"}
+            };
+
+            foreach (TemplateLineConfig line in config.Body) {
+                content = content.Replace ("{{" + line.Key + "}}", line.Value);
+            }
+
+            //and replace the special function keys
+            foreach (var funcvalue in dic3) {
+                content = content.Replace ("{{=" + funcvalue.Key + "}}", funcvalue.Value);
+            }
+
+            return content;
+        }
+
+        private TemplateLineConfig ParseLine(string line) {
+            string[] splittedLine = line.Split (":".ToCharArray());
+            string key = splittedLine[0].Trim();
+            string value = splittedLine[1].Trim();
+            return new TemplateLineConfig(key, value);
+        }
+    }
+
+    public class FileReader {
+        public static string[] getLines(string filePath) {
+            return File.ReadAllLines (filePath);
+        }
+
+        public static string getContent(string filePath) {
+            return File.ReadAllText(filePath);
+        }
+    }
+
+    enum ExitCode : int {
+        Success = 0,
+        InvalidTemplate = -5,
+        InvalidCommand = -10,
+    }
+
+    class Program {
+        static int Main(string[] args) {
+            string command = args[0];
+            string templateConfigFilePath = args[1];
+            string[] templateConfigLines = FileReader.getLines(templateConfigFilePath);
+
+            TemplateParser parser = new TemplateParser();
+            TemplateConfig templateConfig = parser.ParseConfig(templateConfigLines);
+
+            switch (command) {
+                case "check":
+                    if (!templateConfig.IsValid()) {
+                        Console.WriteLine("Invalid config file.");
+                        return (int) ExitCode.InvalidTemplate; 
+                    }
+
+                    Console.WriteLine("Valid config file.");
+                    return (int) ExitCode.Success;
+                case "fill":
+                    if (!templateConfig.IsValid()) {
+                        Console.WriteLine("Invalid config file.");
+                        return (int) ExitCode.InvalidTemplate; 
+                    }
+
+                    string templateFilePath = args[2];
+                    string templateFileContent = FileReader.getContent(templateFilePath);
+                    string content = parser.ParseContent(templateFileContent, templateConfig);
+
+                    Console.WriteLine(content);
+                    return (int) ExitCode.Success;
+                default:
+                    Console.WriteLine ("valid commands are [check],[fill]");
+                    return (int) ExitCode.InvalidCommand;
+            }
         }
     }
 }
