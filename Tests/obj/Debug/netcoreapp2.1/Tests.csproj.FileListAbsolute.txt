@@ -1,0 +1,17 @@
+/home/hugo/projets/clean_tp/Tests/bin/Debug/netcoreapp2.1/xunit.runner.visualstudio.dotnetcore.testadapter.dll
+/home/hugo/projets/clean_tp/Tests/bin/Debug/netcoreapp2.1/xunit.runner.reporters.netcoreapp10.dll
+/home/hugo/projets/clean_tp/Tests/bin/Debug/netcoreapp2.1/xunit.runner.utility.netcoreapp10.dll
+/home/hugo/projets/clean_tp/Tests/bin/Debug/netcoreapp2.1/Tests.deps.json
+/home/hugo/projets/clean_tp/Tests/bin/Debug/netcoreapp2.1/Tests.runtimeconfig.json
+/home/hugo/projets/clean_tp/Tests/bin/Debug/netcoreapp2.1/Tests.runtimeconfig.dev.json
+/home/hugo/projets/clean_tp/Tests/bin/Debug/netcoreapp2.1/Tests.dll
+/home/hugo/projets/clean_tp/Tests/bin/Debug/netcoreapp2.1/Tests.pdb
+/home/hugo/projets/clean_tp/Tests/bin/Debug/netcoreapp2.1/App.dll
+/home/hugo/projets/clean_tp/Tests/bin/Debug/netcoreapp2.1/App.pdb
+/home/hugo/projets/clean_tp/Tests/obj/Debug/netcoreapp2.1/Tests.csprojAssemblyReference.cache
+/home/hugo/projets/clean_tp/Tests/obj/Debug/netcoreapp2.1/Tests.csproj.CoreCompileInputs.cache
+/home/hugo/projets/clean_tp/Tests/obj/Debug/netcoreapp2.1/Tests.AssemblyInfoInputs.cache
+/home/hugo/projets/clean_tp/Tests/obj/Debug/netcoreapp2.1/Tests.AssemblyInfo.cs
+/home/hugo/projets/clean_tp/Tests/obj/Debug/netcoreapp2.1/Tests.csproj.CopyComplete
+/home/hugo/projets/clean_tp/Tests/obj/Debug/netcoreapp2.1/Tests.dll
+/home/hugo/projets/clean_tp/Tests/obj/Debug/netcoreapp2.1/Tests.pdb
